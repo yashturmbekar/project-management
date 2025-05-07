@@ -84,7 +84,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateAudience = false,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSecretKeyHere"))
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("YourSuperSecureSecretKey1234567890123456"))
         };
     });
 
@@ -99,6 +99,28 @@ builder.Services.AddControllers();
 // Ensure controllers are included in the application
 
 var app = builder.Build();
+
+// Seed admin user
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<AppDbContext>();
+
+    if (!context.Users.Any(u => u.Role == "Admin"))
+    {
+        var adminUser = new User
+        {
+            Name = "Admin",
+            Email = "admin@example.com",
+            Username = "admin",
+            Password = BCrypt.Net.BCrypt.HashPassword("Admin@123"),
+            Role = "Admin"
+        };
+
+        context.Users.Add(adminUser);
+        context.SaveChanges();
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

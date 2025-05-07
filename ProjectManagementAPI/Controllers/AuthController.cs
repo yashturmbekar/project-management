@@ -7,6 +7,7 @@ using Services;
 using Domain;
 using Utilities;
 using ProjectManagementAPI.DTO;
+using System.Text.RegularExpressions;
 
 namespace ProjectManagementAPI.Controllers
 {
@@ -31,15 +32,27 @@ namespace ProjectManagementAPI.Controllers
             _jwtHelper = jwtHelper;
         }
 
+
         /// <summary>
-        /// Registers a new user.
+        /// Registers a new user with the default role of Employee.
         /// </summary>
-        /// <param name="user">The user to register.</param>
+        /// <param name="user">The user details for registration.</param>
         /// <returns>An IActionResult indicating the result of the operation.</returns>
         [HttpPost("register")]
         public IActionResult Register([FromBody] User user)
         {
-            var result = _userService.RegisterUser(user);
+            // Validate email format
+            if (!Regex.IsMatch(user.Email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            {
+                return BadRequest("Invalid email format.");
+            }
+            // Validate password complexity
+            if (!Regex.IsMatch(user.Password, @"^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"))
+            {
+                return BadRequest("Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one special character.");
+            }
+
+            var result = _userService.RegisterUserWithDefaultRole(user);
             if (!result)
             {
                 return BadRequest("User registration failed.");
@@ -48,7 +61,7 @@ namespace ProjectManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Logs in a user.
+        /// Logs in a user and returns a JWT token if successful.
         /// </summary>
         /// <param name="loginDto">The login details.</param>
         /// <returns>An IActionResult containing the JWT token if successful.</returns>

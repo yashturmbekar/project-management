@@ -1,6 +1,7 @@
 using Domain;
 using Utilities;
 using System.Security.Claims;
+using Microsoft.EntityFrameworkCore;
 
 namespace Services;
 
@@ -67,11 +68,11 @@ public class UserService {
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Name, user.Username),
-            new Claim(ClaimTypes.Email, user.Email)
+            new Claim(ClaimTypes.Email, user.Email),
         };
 
         // Generate JWT token
-        return _jwtHelper.GenerateToken(user.Username, claims, 60); // Token valid for 60 minutes
+        return _jwtHelper.GenerateToken(user.Role, claims, 60); // Token valid for 60 minutes
     }
 
     public bool UpgradeUserToManager(int userId)
@@ -89,6 +90,42 @@ public class UserService {
             user.Role = "Manager";
 
             // Save changes to the database
+            _context.SaveChanges();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public async Task<bool> UpgradeUserToManagerAsync(int userId)
+    {
+        try
+        {
+            var rowsAffected = await _context.Database.ExecuteSqlRawAsync(
+                "UPDATE \"Users\" SET \"Role\" = {0} WHERE \"Id\" = {1}", "Manager", userId);
+
+            return rowsAffected > 0;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    public bool UpdateUserRoleToManager(int userId)
+    {
+        try
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return false; // User not found
+            }
+
+            user.Role = "Manager";
             _context.SaveChanges();
 
             return true;
@@ -135,5 +172,11 @@ public class UserService {
         {
             return false;
         }
+    }
+
+    public string? GetUserRole(int userId)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        return user?.Role;
     }
 }

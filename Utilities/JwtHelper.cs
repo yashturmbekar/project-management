@@ -12,9 +12,11 @@ public class JwtHelper {
         _secretKey = secretKey;
     }
 
-    public string GenerateToken(string username, IEnumerable<Claim> claims, int expiryMinutes) {
+    public string GenerateToken(string role, IEnumerable<Claim> claims, int expiryMinutes) {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+        claims = claims.Append(new Claim(ClaimTypes.Role, role)); // Add role claim
 
         var tokenDescriptor = new SecurityTokenDescriptor {
             Subject = new ClaimsIdentity(claims),
