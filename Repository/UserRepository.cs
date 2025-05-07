@@ -1,4 +1,5 @@
 using Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
@@ -20,5 +21,16 @@ public class UserRepository : IUserRepository {
 
     public IEnumerable<User> GetAllUsers() {
         return _context.Users.ToList();
+    }
+
+    public async Task<User?> GetUserByIdAsync(int userId)
+    {
+        return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+    }
+
+    public async System.Threading.Tasks.Task UpdateUserAsync(User user)
+    {
+        _context.Users.Update(user);
+        await _context.SaveChangesAsync();
     }
 }

@@ -7,4 +7,6 @@ public interface IUserRepository {
     void AddUser(User user);
     User GetUserById(int id);
     IEnumerable<User> GetAllUsers();
+    Task<User?> GetUserByIdAsync(int userId);
+    System.Threading.Tasks.Task UpdateUserAsync(User user);
 }

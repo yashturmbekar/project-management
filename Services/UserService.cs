@@ -2,19 +2,23 @@ using Domain;
 using Utilities;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
 namespace Services;
 
 public class UserService {
     private readonly AppDbContext _context;
     private readonly JwtHelper _jwtHelper;
+    private readonly IUserRepository _userRepository;
+    private readonly IProjectRepository _projectRepository;
 
-    public UserService(AppDbContext context, JwtHelper jwtHelper)
+    public UserService(AppDbContext context, JwtHelper jwtHelper, IUserRepository userRepository, IProjectRepository projectRepository)
     {
         _context = context;
         _jwtHelper = jwtHelper;
+        _userRepository = userRepository;
+        _projectRepository = projectRepository;
     }
-
     public bool RegisterUser(User user)
     {
         try
@@ -75,31 +79,6 @@ public class UserService {
         return _jwtHelper.GenerateToken(user.Role, user.Id, claims, 60); // Token valid for 60 minutes
     }
 
-    public bool UpgradeUserToManager(int userId)
-    {
-        try
-        {
-            // Find the user by ID
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null)
-            {
-                return false; // User not found
-            }
-
-            // Update the user's role to Manager
-            user.Role = "Manager";
-
-            // Save changes to the database
-            _context.SaveChanges();
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
     public async Task<bool> UpgradeUserToManagerAsync(int userId)
     {
         try
@@ -113,46 +92,6 @@ public class UserService {
         {
             return false;
         }
-    }
-
-    public bool UpdateUserRoleToManager(int userId)
-    {
-        try
-        {
-            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-            if (user == null)
-            {
-                return false; // User not found
-            }
-
-            user.Role = "Manager";
-            _context.SaveChanges();
-
-            return true;
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
-    public bool CanAssignToProject(int userId, out string validationMessage)
-    {
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-        if (user == null)
-        {
-            validationMessage = "User not found.";
-            return false;
-        }
-
-        if (user.AssignedProjectId != null)
-        {
-            validationMessage = "The user is already assigned to a project.";
-            return false;
-        }
-
-        validationMessage = string.Empty;
-        return true;
     }
 
     public User? GetUserById(int userId)
@@ -172,5 +111,35 @@ public class UserService {
         {
             return false;
         }
+    }
+
+    public async Task<bool> AssignUserToProjectAsync(int userId, int projectId)
+    {
+        var user = await _userRepository.GetUserByIdAsync(userId);
+        if (user == null)
+        {
+            throw new ArgumentException("User not found.", nameof(userId));
+        }
+
+        if (user.Role != "Employee")
+        {
+            throw new InvalidOperationException("Only employees can be assigned to projects.");
+        }
+
+        if (user.AssignedProjectId != null)
+        {
+            throw new InvalidOperationException("The employee is already assigned to another project.");
+        }
+
+        var project = await _projectRepository.GetProjectByIdAsync(projectId);
+        if (project == null)
+        {
+            throw new ArgumentException("Project not found.", nameof(projectId));
+        }
+
+        user.AssignedProjectId = projectId;
+        await _userRepository.UpdateUserAsync(user);
+
+        return true;
     }
 }

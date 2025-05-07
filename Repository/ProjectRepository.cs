@@ -19,13 +19,24 @@ public class ProjectRepository : IProjectRepository {
         return _context.Projects.FirstOrDefault(p => p.Id == id) ?? new Project(); // Return a default Project instance to avoid null reference warnings
     }
 
-        public IEnumerable<Project> GetAllProjects() {
+    public async Task<Project?> GetProjectByIdAsync(int projectId)
+    {
+        return await _context.Projects.FirstOrDefaultAsync(p => p.Id == projectId);
+    }
+
+    public IEnumerable<Project> GetAllProjects() {
         return _context.Projects.ToList();
     }
 
     public void UpdateProject(Project project) {
         _context.Projects.Update(project);
         _context.SaveChanges();
+    }
+
+    public async System.Threading.Tasks.Task UpdateProjectAsync(Project project)
+    {
+        _context.Projects.Update(project);
+        await _context.SaveChangesAsync();
     }
 
     public void DeleteProject(int id) {

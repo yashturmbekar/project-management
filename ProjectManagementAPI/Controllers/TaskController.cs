@@ -52,7 +52,7 @@ namespace ProjectManagementAPI.Controllers
         /// <param name="taskDto">The task details.</param>
         /// <returns>The created task.</returns>
         [HttpPost]
-        [Authorize(Roles = "Manager")]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult CreateTask([FromBody] TaskDto taskDto)
         {
             if (taskDto == null)

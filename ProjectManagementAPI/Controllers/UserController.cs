@@ -80,5 +80,38 @@ namespace ProjectManagementAPI.Controllers
 
             return Ok("User upgraded to Manager successfully.");
         }
+
+        /// <summary>
+        /// Assigns a project to an employee.
+        /// </summary>
+        /// <param name="userId">The ID of the user to assign.</param>
+        /// <param name="projectId">The ID of the project to assign the user to.</param>
+        /// <returns>An IActionResult indicating the result of the operation.</returns>
+        [HttpPatch("{userId}/assign-project")]
+        [Authorize(Roles = "Manager")]
+        public IActionResult AssignProjectToUser(int userId, [FromBody] int projectId)
+        {
+            var user = _userService.GetUserById(userId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            if (user.Role != "Employee")
+            {
+                return BadRequest("Only employees can be assigned to projects.");
+            }
+
+            var project = _projectService.GetProjectById(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
+
+            user.AssignedProjectId = projectId;
+            _userService.UpdateUser(user);
+
+            return Ok("Project assigned successfully.");
+        }
     }
 }

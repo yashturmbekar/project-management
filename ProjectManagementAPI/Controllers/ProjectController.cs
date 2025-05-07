@@ -40,22 +40,8 @@ namespace ProjectManagementAPI.Controllers
         [HttpGet]
         public IActionResult GetProjects()
         {
-            var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
-
-            if (userId == null)
-            {
-                return Unauthorized();
-            }
-
-            if (userRole == "Admin")
-            {
                 var allProjects = _projectService.GetAllProjects();
                 return Ok(allProjects);
-            }
-
-            var projects = _projectService.GetProjectsForUser(userId);
-            return Ok(projects);
         }
 
         /// <summary>
@@ -64,7 +50,7 @@ namespace ProjectManagementAPI.Controllers
         /// <param name="projectDto">The project details.</param>
         /// <returns>The created project.</returns>
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult CreateProject([FromBody] ProjectDto projectDto)
         {
             if (projectDto == null)
@@ -101,7 +87,7 @@ namespace ProjectManagementAPI.Controllers
         /// <param name="projectDto">The project data transfer object.</param>
         /// <returns>No content if successful.</returns>
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult UpdateProject(int id, [FromBody] ProjectDto projectDto)
         {
             if (projectDto == null)
@@ -131,7 +117,7 @@ namespace ProjectManagementAPI.Controllers
         /// <param name="id">The project ID.</param>
         /// <returns>No content if successful.</returns>
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin,Manager")]
         public IActionResult DeleteProject(int id)
         {
             var project = _projectService.GetProjectById(id);

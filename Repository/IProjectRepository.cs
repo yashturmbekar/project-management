@@ -10,4 +10,6 @@ public interface IProjectRepository {
     void DeleteProject(int id);
     Project? GetAssignedProjectForUser(int userId);
     IEnumerable<Project> GetAllProjects();
+    Task<Project?> GetProjectByIdAsync(int projectId);
+    System.Threading.Tasks.Task UpdateProjectAsync(Project project);
 }
