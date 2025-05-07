@@ -33,6 +33,28 @@ public class UserService {
         }
     }
 
+    public bool RegisterUserWithDefaultRole(User user)
+    {
+        try
+        {
+            // Assign default role as Employee
+            user.Role = "Employee";
+
+            // Hash the password using BCrypt
+            user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
+
+            // Save the user to the database
+            _context.Users.Add(user);
+            _context.SaveChanges();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
     public string? LoginUser(string username, string password)
     {
         var user = _context.Users.FirstOrDefault(u => u.Username == username);
@@ -50,5 +72,30 @@ public class UserService {
 
         // Generate JWT token
         return _jwtHelper.GenerateToken(user.Username, claims, 60); // Token valid for 60 minutes
+    }
+
+    public bool UpgradeUserToManager(int userId)
+    {
+        try
+        {
+            // Find the user by ID
+            var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+            if (user == null)
+            {
+                return false; // User not found
+            }
+
+            // Update the user's role to Manager
+            user.Role = "Manager";
+
+            // Save changes to the database
+            _context.SaveChanges();
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

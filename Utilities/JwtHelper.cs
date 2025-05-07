@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 public class JwtHelper {
-    private readonly string _secretKey;
+    private readonly string _secretKey = "YourSuperSecureSecretKey1234567890123456"; // Ensure key is at least 128 bits
 
     public JwtHelper(string secretKey) {
         _secretKey = secretKey;
