@@ -1,0 +1,64 @@
+# Ignore build output
+bin/
+obj/
+
+# Ignore build output for each project
+Domain/bin/
+Domain/obj/
+Repository/bin/
+Repository/obj/
+Services/bin/
+Services/obj/
+Utilities/bin/
+Utilities/obj/
+ProjectManagementAPI/bin/
+ProjectManagementAPI/obj/
+
+# Ignore user-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignore logs
+Logs/
+*.log
+
+# Ignore Visual Studio Code settings
+.vscode/
+
+# Ignore NuGet packages
+*.nupkg
+packages/
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore publish output
+publish/
+
+# Ignore application insights
+ApplicationInsights.config
+
+# Ignore Rider IDE files
+.idea/
+*.iml
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore other IDE-specific files
+*.vs/
+
+# Ignore coverage reports
+coverage/
+*.coverage
+*.coveragexml
+
+# Ignore generated files
+*.generated.cs
+
+# Ignore secrets
+secrets.json
