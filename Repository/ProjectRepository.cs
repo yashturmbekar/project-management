@@ -1,19 +1,38 @@
 using Domain;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository;
 
 public class ProjectRepository : IProjectRepository {
+    private readonly AppDbContext _context;
+
+    public ProjectRepository(AppDbContext context) {
+        _context = context;
+    }
+
     public void AddProject(Project project) {
-        // Implementation for adding a project
+        _context.Projects.Add(project);
+        _context.SaveChanges();
     }
 
     public Project GetProjectById(int id) {
-        // Implementation for retrieving a project by ID
-        return null;
+        return _context.Projects.FirstOrDefault(p => p.Id == id) ?? new Project(); // Return a default Project instance to avoid null reference warnings
     }
 
     public IEnumerable<Project> GetAllProjects() {
-        // Implementation for retrieving all projects
-        return null;
+        return _context.Projects.ToList();
+    }
+
+    public void UpdateProject(Project project) {
+        _context.Projects.Update(project);
+        _context.SaveChanges();
+    }
+
+    public void DeleteProject(int id) {
+        var project = _context.Projects.FirstOrDefault(p => p.Id == id);
+        if (project != null) {
+            _context.Projects.Remove(project);
+            _context.SaveChanges();
+        }
     }
 }

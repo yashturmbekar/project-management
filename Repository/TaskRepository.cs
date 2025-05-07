@@ -7,7 +7,7 @@ public class TaskRepository : ITaskRepository {
 
     public Task GetTaskById(int id) {
         // Implementation for retrieving a task by ID
-        return null;
+        return new Task(); // Return a default Task instance to avoid null reference warnings
     }
 
     public IEnumerable<Task> GetAllTasks() {

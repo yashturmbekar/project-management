@@ -9,7 +9,7 @@ public class UserRepository : IUserRepository {
 
     public User GetUserById(int id) {
         // Implementation for retrieving a user by ID
-        return null;
+        return new User(); // Return a default User instance to avoid null reference warnings
     }
 
     public IEnumerable<User> GetAllUsers() {

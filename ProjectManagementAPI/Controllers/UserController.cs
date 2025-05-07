@@ -8,10 +8,17 @@ namespace ProjectManagementAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    /// <summary>
+    /// Controller for managing user-related operations.
+    /// </summary>
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserController"/> class.
+        /// </summary>
+        /// <param name="userService">The user service.</param>
         public UserController(UserService userService)
         {
             _userService = userService;
