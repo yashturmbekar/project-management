@@ -8,9 +8,7 @@ public class Project {
     public string Description { get; set; } = string.Empty;
     
     [ForeignKey("User")]
-    public int UserId { get; set; }
-    public User User { get; set; } = new User();
-    
+    public int UserId { get; set; }    
     public List<Task> Tasks { get; set; } = new List<Task>();
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }

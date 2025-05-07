@@ -20,14 +20,17 @@ namespace ProjectManagementAPI.Controllers
     public class ProjectController : ControllerBase
     {
         private readonly ProjectService _projectService;
+        private readonly UserService _userService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectController"/> class.
         /// </summary>
         /// <param name="projectService">The project service.</param>
-        public ProjectController(ProjectService projectService)
+        /// <param name="userService">The user service.</param>
+        public ProjectController(ProjectService projectService, UserService userService)
         {
             _projectService = projectService;
+            _userService = userService;
         }
 
         /// <summary>
@@ -71,6 +74,15 @@ namespace ProjectManagementAPI.Controllers
             };
 
             _projectService.CreateProject(project);
+
+            var user = _userService.GetUserById(project.UserId);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            user.AssignedProjectId = project.Id;
+            _userService.UpdateUser(user);
 
             return CreatedAtAction(nameof(GetProjects), new { id = project.Id }, project);
         }
