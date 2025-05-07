@@ -66,7 +66,7 @@ namespace ProjectManagementAPI.Controllers
         /// <summary>
         /// Authenticates a user and generates a JWT token.
         /// </summary>
-        /// <param name="userLoginDto">The user login details.</param>
+        /// <param name="loginDto">The user login details.</param>
         /// <returns>A JWT token if authentication is successful.</returns>
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDto loginDto)

@@ -128,12 +128,9 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Project Management API v1");
-        c.RoutePrefix = string.Empty; // Set Swagger UI at the root
-    });
+    app.UseSwaggerUI();
 }
 
 // Add global exception handling middleware

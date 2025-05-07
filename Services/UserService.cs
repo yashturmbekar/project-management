@@ -72,7 +72,7 @@ public class UserService {
         };
 
         // Generate JWT token
-        return _jwtHelper.GenerateToken(user.Role, claims, 60); // Token valid for 60 minutes
+        return _jwtHelper.GenerateToken(user.Role, user.Id, claims, 60); // Token valid for 60 minutes
     }
 
     public bool UpgradeUserToManager(int userId)
