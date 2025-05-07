@@ -38,7 +38,7 @@ namespace ProjectManagementAPI.Controllers
         /// <param name="id">The ID of the user to assign.</param>
         /// <param name="projectId">The ID of the project to assign the user to.</param>
         /// <returns>No content if successful.</returns>
-        [HttpPost("{id}/assign-project")]
+        [HttpPost("{id}/assign-user-to-project")]
         [Authorize(Roles = "Admin")]
         public IActionResult AssignUserToProject(int id, [FromBody] int projectId)
         {
@@ -87,7 +87,7 @@ namespace ProjectManagementAPI.Controllers
         /// <param name="userId">The ID of the user to assign.</param>
         /// <param name="projectId">The ID of the project to assign the user to.</param>
         /// <returns>An IActionResult indicating the result of the operation.</returns>
-        [HttpPatch("{userId}/assign-project")]
+        [HttpPatch("{userId}/assign-project-to-user")]
         [Authorize(Roles = "Manager")]
         public IActionResult AssignProjectToUser(int userId, [FromBody] int projectId)
         {
