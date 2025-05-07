@@ -9,7 +9,7 @@ public enum TaskStatus
 
 public class Task {
     public int Id { get; set; }
-    public string Title { get; set; }
+    public string Title { get; set; } = string.Empty;
     public TaskStatus Status { get; set; } = TaskStatus.NotStarted;
     public int ProjectId { get; set; }
     public string Name { get; set; } = string.Empty;
