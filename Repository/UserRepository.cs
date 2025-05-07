@@ -3,17 +3,22 @@ using Domain;
 namespace Repository;
 
 public class UserRepository : IUserRepository {
+    private readonly AppDbContext _context;
+
+    public UserRepository(AppDbContext context) {
+        _context = context;
+    }
+
     public void AddUser(User user) {
-        // Implementation for adding a user
+        _context.Users.Add(user);
+        _context.SaveChanges();
     }
 
     public User GetUserById(int id) {
-        // Implementation for retrieving a user by ID
-        return new User(); // Return a default User instance to avoid null reference warnings
+        return _context.Users.FirstOrDefault(u => u.Id == id)!;
     }
 
     public IEnumerable<User> GetAllUsers() {
-        // Implementation for retrieving all users
-        return null;
+        return _context.Users.ToList();
     }
 }

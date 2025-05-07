@@ -1,17 +1,36 @@
+using Domain;
+using Task = Domain.Task;
 namespace Repository;
 
 public class TaskRepository : ITaskRepository {
-    public void AddTask(Task task) {
-        // Implementation for adding a task
+    private readonly AppDbContext _context;
+
+    public TaskRepository(AppDbContext context) {
+        _context = context;
+    }
+
+    public void AddTask(Domain.Task task) {
+        _context.Tasks.Add(task);
+        _context.SaveChanges();
     }
 
     public Task GetTaskById(int id) {
-        // Implementation for retrieving a task by ID
-        return new Task(); // Return a default Task instance to avoid null reference warnings
+        return _context.Tasks.FirstOrDefault(t => t.Id == id)!;
     }
 
     public IEnumerable<Task> GetAllTasks() {
-        // Implementation for retrieving all tasks
-        return null;
+        return _context.Tasks.ToList();
+    }
+
+    public void UpdateTask(Task task) {
+        var existingTask = _context.Tasks.FirstOrDefault(t => t.Id == task.Id);
+        if (existingTask != null) {
+            existingTask.Name = task.Name;
+            existingTask.Description = task.Description;
+            existingTask.DueDate = task.DueDate;
+            existingTask.Status = task.Status;
+            existingTask.AssignedUserId = task.AssignedUserId;
+            _context.SaveChanges();
+        }
     }
 }

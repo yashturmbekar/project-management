@@ -98,4 +98,42 @@ public class UserService {
             return false;
         }
     }
+
+    public bool CanAssignToProject(int userId, out string validationMessage)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null)
+        {
+            validationMessage = "User not found.";
+            return false;
+        }
+
+        if (user.AssignedProjectId != null)
+        {
+            validationMessage = "The user is already assigned to a project.";
+            return false;
+        }
+
+        validationMessage = string.Empty;
+        return true;
+    }
+
+    public User? GetUserById(int userId)
+    {
+        return _context.Users.FirstOrDefault(u => u.Id == userId);
+    }
+
+    public bool UpdateUser(User user)
+    {
+        try
+        {
+            _context.Users.Update(user);
+            _context.SaveChanges();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

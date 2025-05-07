@@ -2,7 +2,8 @@ namespace Repository;
 
 public interface ITaskRepository {
     // Define methods for task-related data operations
-    void AddTask(Task task);
-    Task GetTaskById(int id);
-    IEnumerable<Task> GetAllTasks();
+    void AddTask(Domain.Task task);
+    Domain.Task GetTaskById(int id);
+    IEnumerable<Domain.Task> GetAllTasks();
+    void UpdateTask(Domain.Task task);
 }

@@ -3,25 +3,29 @@ using Services;
 using Domain;
 using ProjectManagementAPI.DTO;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ProjectManagementAPI.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
     /// <summary>
     /// Controller for managing user-related operations.
     /// </summary>
+    [ApiController]
+    [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
         private readonly UserService _userService;
+        private readonly ProjectService _projectService;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
         /// </summary>
         /// <param name="userService">The user service.</param>
-        public UserController(UserService userService)
+        /// <param name="projectService">The project service.</param>
+        public UserController(UserService userService, ProjectService projectService)
         {
             _userService = userService;
+            _projectService = projectService;
         }
 
         /// <summary>
@@ -65,6 +69,37 @@ namespace ProjectManagementAPI.Controllers
                 return Unauthorized("Invalid username or password.");
             }
             return Ok(new { Token = token });
+        }
+
+        /// <summary>
+        /// Assigns a user to a project.
+        /// </summary>
+        /// <param name="id">The ID of the user to assign.</param>
+        /// <param name="projectId">The ID of the project to assign the user to.</param>
+        /// <returns>No content if successful.</returns>
+        [HttpPost("{id}/assign-project")]
+        [Authorize(Roles = "Admin")]
+        public IActionResult AssignUserToProject(int id, [FromBody] int projectId)
+        {
+            var user = _userService.GetUserById(id);
+            if (user == null)
+            {
+                return NotFound("User not found.");
+            }
+
+            var project = _projectService.GetProjectById(projectId);
+            if (project == null)
+            {
+                return NotFound("Project not found.");
+            }
+
+            user.AssignedProjectId = projectId;
+            if (!_userService.UpdateUser(user))
+            {
+                return BadRequest("Failed to update user.");
+            }
+
+            return NoContent();
         }
     }
 }
