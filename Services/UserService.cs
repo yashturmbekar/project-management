@@ -173,10 +173,4 @@ public class UserService {
             return false;
         }
     }
-
-    public string? GetUserRole(int userId)
-    {
-        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
-        return user?.Role;
-    }
 }

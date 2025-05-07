@@ -130,6 +130,31 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+// Add global exception handling middleware
+app.Use(async (context, next) =>
+{
+    try
+    {
+        await next();
+    }
+    catch (Exception ex)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+
+        var problemDetails = new
+        {
+            type = "https://httpstatuses.com/500",
+            title = "An unexpected error occurred.",
+            status = StatusCodes.Status500InternalServerError,
+            detail = ex.Message,
+            instance = context.Request.Path
+        };
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
+    }
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthentication();
