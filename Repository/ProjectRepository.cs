@@ -19,7 +19,7 @@ public class ProjectRepository : IProjectRepository {
         return _context.Projects.FirstOrDefault(p => p.Id == id) ?? new Project(); // Return a default Project instance to avoid null reference warnings
     }
 
-    public IEnumerable<Project> GetAllProjects() {
+        public IEnumerable<Project> GetAllProjects() {
         return _context.Projects.ToList();
     }
 
@@ -34,5 +34,16 @@ public class ProjectRepository : IProjectRepository {
             _context.Projects.Remove(project);
             _context.SaveChanges();
         }
+    }
+
+    public Project? GetAssignedProjectForUser(int userId)
+    {
+        var user = _context.Users.FirstOrDefault(u => u.Id == userId);
+        if (user == null || user.AssignedProjectId == null)
+        {
+            return null; // Return null if no assigned project
+        }
+
+        return _context.Projects.FirstOrDefault(p => p.Id == user.AssignedProjectId);
     }
 }

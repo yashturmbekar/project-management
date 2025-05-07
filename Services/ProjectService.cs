@@ -12,10 +12,14 @@ namespace Services
             _projectRepository = projectRepository;
         }
 
-        public IEnumerable<Project> GetProjectsForUser(string userId)
+        public Project GetProjectsForUser(string userId)
         {
-            int userIdInt = int.Parse(userId);
-            return _projectRepository.GetAllProjects().Where(p => p.UserId == userIdInt);
+            if (!int.TryParse(userId, out int userIdInt))
+            {
+                throw new ArgumentException("Invalid user ID format.", nameof(userId));
+            }
+
+            return _projectRepository.GetAssignedProjectForUser(int.Parse(userId));
         }
 
         public void CreateProject(Project project)
@@ -60,6 +64,16 @@ namespace Services
         public void DeleteProject(int id)
         {
             _projectRepository.DeleteProject(id);
+        }
+
+        public IEnumerable<Project> GetAllProjects()
+        {
+            return _projectRepository.GetAllProjects();
+        }
+
+        public Project? GetAssignedProjectForUser(int userId)
+        {
+            return _projectRepository.GetAssignedProjectForUser(userId);
         }
     }
 }

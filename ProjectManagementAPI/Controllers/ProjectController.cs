@@ -41,9 +41,17 @@ namespace ProjectManagementAPI.Controllers
         public IActionResult GetProjects()
         {
             var userId = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            var userRole = User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Role)?.Value;
+
             if (userId == null)
             {
                 return Unauthorized();
+            }
+
+            if (userRole == "Admin")
+            {
+                var allProjects = _projectService.GetAllProjects();
+                return Ok(allProjects);
             }
 
             var projects = _projectService.GetProjectsForUser(userId);
@@ -70,12 +78,11 @@ namespace ProjectManagementAPI.Controllers
                 Description = projectDto.Description,
                 StartDate = projectDto.StartDate,
                 EndDate = projectDto.EndDate,
-                UserId = projectDto.UserId
             };
 
             _projectService.CreateProject(project);
 
-            var user = _userService.GetUserById(project.UserId);
+            var user = _userService.GetUserById(projectDto.UserId);
             if (user == null)
             {
                 return NotFound("User not found.");
