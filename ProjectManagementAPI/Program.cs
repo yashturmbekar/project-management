@@ -7,11 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 var builder = WebApplication.CreateBuilder(args);
 
 Log.Logger = new LoggerConfiguration()
-    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day)
+    .MinimumLevel.Information() // Log information and above
+    .WriteTo.Console() // Log to console
+    .WriteTo.File("Logs/log-.txt", rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7) // Daily rolling logs with retention
     .CreateLogger();
 
 builder.Host.UseSerilog(Log.Logger);
@@ -125,9 +128,12 @@ using (var scope = app.Services.CreateScope())
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Project Management API v1");
+        c.RoutePrefix = string.Empty; // Set Swagger UI at the root
+    });
 }
 
 // Add global exception handling middleware
@@ -136,6 +142,38 @@ app.Use(async (context, next) =>
     try
     {
         await next();
+    }
+    catch (UnauthorizedAccessException ex)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+        var problemDetails = new
+        {
+            type = "https://httpstatuses.com/401",
+            title = "Unauthorized access.",
+            status = StatusCodes.Status401Unauthorized,
+            detail = ex.Message,
+            instance = context.Request.Path
+        };
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
+    }
+    catch (ValidationException ex)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
+
+        var problemDetails = new
+        {
+            type = "https://httpstatuses.com/400",
+            title = "Validation error.",
+            status = StatusCodes.Status400BadRequest,
+            detail = ex.Message,
+            instance = context.Request.Path
+        };
+
+        await context.Response.WriteAsJsonAsync(problemDetails);
     }
     catch (Exception ex)
     {

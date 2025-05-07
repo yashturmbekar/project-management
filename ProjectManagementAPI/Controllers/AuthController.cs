@@ -12,8 +12,11 @@ using System.Text.RegularExpressions;
 namespace ProjectManagementAPI.Controllers
 {
     /// <summary>
-    /// Controller for handling authentication-related operations.
+    /// Handles authentication-related operations.
     /// </summary>
+    /// <remarks>
+    /// This controller provides endpoints for user login and authentication.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
@@ -61,10 +64,10 @@ namespace ProjectManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Logs in a user and returns a JWT token if successful.
+        /// Authenticates a user and generates a JWT token.
         /// </summary>
-        /// <param name="loginDto">The login details.</param>
-        /// <returns>An IActionResult containing the JWT token if successful.</returns>
+        /// <param name="userLoginDto">The user login details.</param>
+        /// <returns>A JWT token if authentication is successful.</returns>
         [HttpPost("login")]
         public IActionResult Login([FromBody] UserLoginDto loginDto)
         {

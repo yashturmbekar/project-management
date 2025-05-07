@@ -8,8 +8,11 @@ using Task = Domain.Task;
 namespace ProjectManagementAPI.Controllers
 {
     /// <summary>
-    /// Controller for managing tasks.
+    /// Manages task-related operations.
     /// </summary>
+    /// <remarks>
+    /// This controller provides endpoints for creating, updating, and retrieving tasks.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -27,9 +30,9 @@ namespace ProjectManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Gets the tasks assigned to the current user.
+        /// Retrieves all tasks.
         /// </summary>
-        /// <returns>A list of tasks assigned to the user.</returns>
+        /// <returns>A list of tasks.</returns>
         [HttpGet]
         public IActionResult GetTasksForCurrentUser()
         {
@@ -44,9 +47,9 @@ namespace ProjectManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Creates a new task under a project. Accessible only to Managers.
+        /// Creates a new task.
         /// </summary>
-        /// <param name="taskDto">The task data transfer object.</param>
+        /// <param name="taskDto">The task details.</param>
         /// <returns>The created task.</returns>
         [HttpPost]
         [Authorize(Roles = "Manager")]

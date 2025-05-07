@@ -9,8 +9,11 @@ using System.Security.Claims;
 namespace ProjectManagementAPI.Controllers
 {
     /// <summary>
-    /// Controller for managing projects.
+    /// Manages project-related operations.
     /// </summary>
+    /// <remarks>
+    /// This controller provides endpoints for creating, updating, and retrieving projects.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     [Authorize]
@@ -28,7 +31,7 @@ namespace ProjectManagementAPI.Controllers
         }
 
         /// <summary>
-        /// Gets the projects for the current user.
+        /// Retrieves all projects.
         /// </summary>
         /// <returns>A list of projects.</returns>
         [HttpGet]
@@ -47,7 +50,7 @@ namespace ProjectManagementAPI.Controllers
         /// <summary>
         /// Creates a new project.
         /// </summary>
-        /// <param name="projectDto">The project data transfer object.</param>
+        /// <param name="projectDto">The project details.</param>
         /// <returns>The created project.</returns>
         [HttpPost]
         [Authorize(Roles = "Admin")]

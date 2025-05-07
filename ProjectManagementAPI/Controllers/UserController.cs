@@ -8,8 +8,11 @@ using Microsoft.AspNetCore.Authorization;
 namespace ProjectManagementAPI.Controllers
 {
     /// <summary>
-    /// Controller for managing user-related operations.
+    /// Manages user-related operations.
     /// </summary>
+    /// <remarks>
+    /// This controller provides endpoints for creating, updating, and retrieving users.
+    /// </remarks>
     [ApiController]
     [Route("api/[controller]")]
     public class UserController : ControllerBase
@@ -28,7 +31,7 @@ namespace ProjectManagementAPI.Controllers
             _projectService = projectService;
         }
 
-
+        
         /// <summary>
         /// Assigns a user to a project.
         /// </summary>
